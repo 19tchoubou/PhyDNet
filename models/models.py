@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
+
 class PhyCell_Cell(nn.Module):
     def __init__(self, input_dim, F_hidden_dim, kernel_size, bias=1):
         super(PhyCell_Cell, self).__init__()
@@ -13,7 +14,7 @@ class PhyCell_Cell(nn.Module):
         self.bias = bias
         
         self.F = nn.Sequential()
-        self.F.add_module('bn1',nn.GroupNorm( 4 ,input_dim))          
+        self.F.add_module('bn1',nn.BatchNorm2d(input_dim))          
         self.F.add_module('conv1', nn.Conv2d(in_channels=input_dim, out_channels=F_hidden_dim, kernel_size=self.kernel_size, stride=(1,1), padding=self.padding))  
         #self.F.add_module('f_act1', nn.LeakyReLU(negative_slope=0.1))        
         self.F.add_module('conv2', nn.Conv2d(in_channels=F_hidden_dim, out_channels=input_dim, kernel_size=(1,1), stride=(1,1), padding=(0,0)))
@@ -271,4 +272,3 @@ class EncoderRNN(torch.nn.Module):
         concat = output1[-1]+output2[-1]
         output_image = torch.sigmoid( self.image_cnn_dec([concat,skip]) )
         return out_phys, hidden1, output_image, out_phys, out_conv
-
